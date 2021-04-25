@@ -45,13 +45,17 @@ func HandleSignals(stopFunction func(), cancel context.CancelFunc) {
 
 	// On termination signals, gracefully stop the Beat
 	sigc := make(chan os.Signal, 1)
-	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+
+	// Ignore SIGTERM and do not notify SIGTERM
+	signal.Notify(sigc, syscall.SIGINT, syscall.SIGHUP)
+	signal.Ignore(syscall.SIGTERM)
+
 	go func() {
 		sig := <-sigc
 
 		switch sig {
-		case syscall.SIGINT, syscall.SIGTERM:
-			logger.Debug("Received sigterm/sigint, stopping")
+		case syscall.SIGINT:
+			logger.Debug("Received sigint, stopping")
 		case syscall.SIGHUP:
 			logger.Debug("Received sighup, stopping")
 		}
