@@ -50,8 +50,11 @@ func HandleSignals(stopFunction func(), cancel context.CancelFunc) {
 		sig := <-sigc
 
 		switch sig {
-		case syscall.SIGINT, syscall.SIGTERM:
-			logger.Debug("Received sigterm/sigint, stopping")
+		case syscall.SIGTERM:
+			logger.Debug("Received sigterm, do nothing")
+			return
+		case syscall.SIGINT:
+			logger.Debug("Received sigint, stopping")
 		case syscall.SIGHUP:
 			logger.Debug("Received sighup, stopping")
 		}
